@@ -1,1 +1,61 @@
+# Parámetros principales del servidor de correo Postfix
+smtpd_banner = $myhostname ESMTP $mail_name (Ubuntu)
+biff = no
+
+# Sin puntos automáticos al final del dominio
+append_dot_mydomain = no
+
+# Compatibilidad con versiones
+compatibility_level = 3.6
+
+# Parámetros TLS para seguridad en el envío
+smtpd_tls_cert_file=/etc/ssl/certs/ssl-cert-snakeoil.pem
+smtpd_tls_key_file=/etc/ssl/private/ssl-cert-snakeoil.key
+smtpd_tls_security_level=may
+smtp_tls_CApath=/etc/ssl/certs
+smtp_tls_security_level=may
+smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
+
+# Restricciones de retransmisión
+smtpd_relay_restrictions = permit_mynetworks permit_sasl_authenticated defer_unauth_destination
+
+# Configuración del Dominio y Redes
+myhostname = mail.corporativo.corp
+mydomain = corporativo.corp
+myorigin = $mydomain
+inet_interfaces = all
+mydestination = $myhostname, localhost.$mydomain, localhost, $mydomain
+mynetworks = 127.0.0.0/8 192.168.1.0/24
+mailbox_size_limit = 0
+recipient_delimiter = +
+inet_protocols = all
+
+# Buzón local bajo el estándar Maildir
+home_mailbox = Maildir/
+
+
+
+# Configuración global de Dovecot
+protocols = imap pop3 lmtp
+
+# Permitir autenticación en texto plano para pruebas locales/laboratorio
+disable_plaintext_auth = no
+
+# Mecanismos de autenticación permitidos
+auth_mechanisms = plain login
+
+# Ruta de almacenamiento de los buzones de los usuarios
+mail_location = maildir:~/Maildir
+
+# Configuración del servicio de autenticación y sockets para Postfix
+service auth {
+  unix_listener /var/spool/postfix/private/auth {
+    mode = 0660
+    user = postfix
+    group = postfix
+  }
+}
+
+
+
 
